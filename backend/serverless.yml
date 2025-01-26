@@ -1,0 +1,323 @@
+service: propio-backend
+frameworkVersion: "3"
+useDotenv: true
+
+package:
+  individually: false
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  profile: propio
+  region: us-west-2
+  runtime: nodejs18.x
+  versionFunctions: false
+  websocketsApiRouteSelectionExpression: $request.body.action
+  websocketsDescription: Websocket notifications for Propio Backend
+  iamRoleStatements:
+  # Allow functions to send messages to these queues
+  - Effect: Allow
+    Action:
+      - sqs:SendMessage
+    Resource:
+      Fn::GetAtt:
+        - categorizeTransactionQueue
+        - Arn
+  - Effect: Allow
+    Action:
+      - sqs:SendMessage
+    Resource:
+      Fn::GetAtt:
+        - sendNotificationQueue
+        - Arn
+  # Allow functions to receive messages from these queues
+  - Effect: Allow
+    Action:
+      - sqs:ReceiveMessage
+    Resource:
+      Fn::GetAtt:
+        - categorizeTransactionDeadletterQueue
+        - Arn
+  environment:
+    TEMP: ${env:TEMP, ''} # For Windows
+    TMPDIR: '/tmp' # For darwin/linux
+    WEBSOCKET_GATEWAY_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - https://
+          - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${sls:stage}
+    REGION: !Ref AWS::Region
+    REGION_FOR_SUBNETS  :
+      Fn::Join:
+        - ''
+        - - Ref: AWS::Region
+          - a
+    ENVIRONMENT: ${sls:stage}
+  httpApi:
+    authorizers:
+      auth0:
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: "https://example.us.auth0.com/"
+        audience: "example.com"
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  webpack:
+    serializedCompile: true
+
+functions:
+  connectionHandler:
+    handler: dist/src/handlers/WebSocketHandler.handle
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - sendNotificationQueue
+              - Arn
+          batchSize: 5
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
+      - websocket:
+          route: subscribeToTransaction
+      - websocket:
+          route: unsubscribeFromTransaction
+      - httpApi:
+          method: POST
+          path: /triggerWebsocketNotifications
+
+  # #########################################################################
+  # These functions are triggered by HTTP requests
+  # #########################################################################
+  getFinancialInstitutionConnectionUrl:
+    handler: dist/src/handlers/DefaultApi.getFinancialInstitutionConnectionUrl
+    events:
+      - httpApi:
+          method: GET
+          path: /api/partners/{partner_id}/organizations/{organization_id}/financial_accounts/connection_url
+          authorizer:
+            name: auth0
+  getLedgerConnectionUrl:
+    handler: dist/src/handlers/DefaultApi.getLedgerConnectionUrl
+    events:
+      - httpApi:
+          method: GET
+          path: /api/partners/{partner_id}/organizations/{organization_id}/ledgers/{ledger_id}/connection_url
+  getLedgerDetails:
+    handler: dist/src/handlers/DefaultApi.getLedgerDetails
+    events:
+      - httpApi:
+          method: GET
+          path: /api/partners/{partner_id}/organizations/{organization_id}/ledgers/{ledger_id}
+          authorizer:
+            name: auth0
+  getLedgerChartOfAccounts:
+    handler: dist/src/handlers/DefaultApi.getLedgerChartOfAccounts
+    events:
+      - httpApi:
+          method: GET
+          path: /api/partners/{partner_id}/organizations/{organization_id}/ledgers/{ledger_id}/accounts
+  getOrganizationsForPartner:
+    handler: dist/src/handlers/DefaultApi.getOrganizationsForPartner
+    events:
+      - httpApi:
+          method: GET
+          path: /api/partners/{partner_id}/organizations
+          authorizer:
+            name: auth0
+  getTransactionId:
+    handler: dist/src/handlers/DefaultApi.getTransactionId
+    events:
+      - httpApi:
+          method: GET
+          path: /api/transactions/{transaction_id}
+          authorizer:
+            name: auth0
+  getTransactions:
+    handler: dist/src/handlers/DefaultApi.getTransactions
+    events:
+      - httpApi:
+          method: GET
+          path: /api/transactions
+          authorizer:
+            name: auth0
+  getTransactionsForClient:
+    handler: dist/src/handlers/DefaultApi.getTransactionsForClient
+    events:
+      - httpApi:
+          method: GET
+          path: /api/clients/{client_id}/transactions
+  getUserByAuth0Id:
+    handler: dist/src/handlers/DefaultApi.getUserByAuth0Id
+    events:
+      - httpApi:
+          method: GET
+          path: /api/users/{auth0_id}
+          authorizer:
+            name: auth0
+  onboardUser:
+    handler: dist/src/handlers/DefaultApi.onboardUser
+    events:
+      - httpApi:
+          method: POST
+          path: /api/partners/{auth0_id}/onboard
+          authorizer:
+            name: auth0
+  saveUser:
+    handler: dist/src/handlers/DefaultApi.saveUser
+    events:
+      - httpApi:
+          method: POST
+          path: /api/users/{auth0_id}
+          authorizer:
+            name: auth0
+  sendMessage:
+    handler: dist/src/handlers/DefaultApi.sendMessage
+    events:
+      - httpApi:
+          method: POST
+          path: /api/messages/channel/{channel_id}/send
+          authorizer:
+            name: auth0
+  updateTransaction:
+    handler: dist/src/handlers/DefaultApi.updateTransaction
+    events:
+      - httpApi:
+          method: POST
+          path: /api/transactions/{transaction_id}
+          authorizer:
+            name: auth0
+  updateTransactions:
+    handler: dist/src/handlers/DefaultApi.updateTransactions
+    events:
+      - httpApi:
+          method: POST
+          path: /api/transactions
+          authorizer:
+            name: auth0
+  createClient:
+    handler: dist/src/handlers/DefaultApi.createClient
+    events:
+      - httpApi:
+          method: POST
+          path: /api/clients
+  getPartnersFromEmails:
+    handler: dist/src/handlers/DefaultApi.getPartnersFromEmails
+    events:
+      - httpApi:
+          method: POST
+          path: /api/partners/fromEmails
+          authorizer:
+            name: auth0
+  shareClientsforPartners:
+    handler: dist/src/handlers/DefaultApi.shareClientsforPartners
+    events:
+      - httpApi:
+          method: POST
+          path: /api/share
+          authorizer:
+            name: auth0
+  createTransactionForOrganization:
+    handler: dist/src/handlers/DefaultApi.createTransactionForOrganization
+    events:
+      - httpApi:
+          method: POST
+          path: /api/partners/{partner_id}/organizations/{organization_id}/transactions
+          authorizer:
+            name: auth0
+  editOrganization:
+    handler: dist/src/handlers/DefaultApi.editOrganization
+    events:
+      - httpApi:
+          method: PUT
+          path: /api/partners/{partner_id}/organizations/{organization_id}
+          authorizer:
+            name: auth0
+  editClient:
+    handler: dist/src/handlers/DefaultApi.editClient
+    events:
+      - httpApi:
+          method: PUT
+          path: /api/clients/{client_id}
+  getClients:
+    handler: dist/src/handlers/DefaultApi.getClients
+    events:
+      - httpApi:
+          method: GET
+          path: /api/clients
+  getOrganizationClients:
+    handler: dist/src/handlers/DefaultApi.getOrganizationClients
+    events:
+      - httpApi:
+          method: GET
+          path: /api/clients/organizations/{organization_id}
+  categorizeTransactionOnLedger:
+    handler: dist/src/handlers/DefaultApi.categorizeTransactionOnLedger
+    events:
+      - httpApi:
+          method: PUT
+          path: /api/categorize
+          authorizer:
+            name: auth0
+  suggestCategoryForTransaction:
+    handler: dist/src/handlers/DefaultApi.suggestCategoryForTransaction
+    events:
+      - httpApi:
+          method: POST
+          path: /api/transactions/{transaction_id}/suggest
+          authorizer:
+            name: auth0
+  getAccountingMappings:
+    handler: dist/src/handlers/DefaultApi.getAccountingMappings
+    events:
+      - httpApi:
+          method: GET
+          path: /api/clients/{client_id}/mappings
+          authorizer:
+            name: auth0
+  saveMappings:
+    handler: dist/src/handlers/DefaultApi.saveMappings
+    events:
+      - httpApi:
+          method: POST
+          path: /api/clients/{client_id}/mappings
+          authorizer:
+            name: auth0
+  refreshChartOfAccounts:
+    handler: dist/src/handlers/DefaultApi.refreshChartOfAccounts
+    events:
+      - httpApi:
+          method: POST
+          path: /api/partners/{partner_id}/organizations/{organization_id}/ledgers/{ledger_id}/accounts
+
+resources:
+  Resources:
+    categorizeTransactionQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "categorizeTransactionQueue-${sls:stage}"
+        VisibilityTimeout: 300
+
+    categorizeTransactionDeadletterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "categorizeTransactionDeadletterQueue-${sls:stage}"
+        VisibilityTimeout: 300
+
+    sendNotificationQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "sendNotificationQueue-${sls:stage}"
+        VisibilityTimeout: 300
+

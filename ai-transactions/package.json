@@ -1,0 +1,13 @@
+{
+  "name": "transactions-service",
+  "version": "1.0.0",
+  "description": "Simple service that generates random transactions",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "faker": "^5.5.3"
+  }
+}

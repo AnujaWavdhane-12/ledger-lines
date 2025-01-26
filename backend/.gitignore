@@ -1,0 +1,13 @@
+*.sqlite
+sqllite.temp.sqlite2.db
+sqllite.temp.sqlite2.db-journal
+yarn-error.log
+test-results.json
+junit.xml
+combined.log
+.webpackCache
+.webpack
+./dist/
+
+node_modules
+data

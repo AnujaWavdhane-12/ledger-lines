@@ -1,0 +1,612 @@
+/* You can add global styles to this file, and also import other style files */
+@use "assets/css/brand.scss" as brand;
+@use "sass:meta";
+
+@import "../node_modules/primeng/resources/primeng.css";
+@import "../node_modules/primeicons/primeicons.css";
+
+/*
+* Override Bootstrap's colors
+*/
+$primary: brand.$primary;
+$secondary: brand.$secondary;
+$success: brand.$success;
+$info: brand.$info;
+$warning: brand.$warning;
+$danger: brand.$danger;
+
+/*
+* Override PrimeNG's Lara Light Blue Colors, as well as any other variables that might need updated
+*/
+$fontFamily: brand.$font-secondary;
+$primaryColor: brand.$primary;
+$primaryLightColor: brand.$magnolia;
+$primaryDarkColor: brand.$rich-blue;
+$primaryDarkerColor: brand.$rich-blue-darker;
+// If we change this, the button color also changes.
+// $primaryTextColor: brand.$black;
+$textSecondaryColor: #6c757d;
+$highlightBg: #eef2ff;
+$highlightTextColor: brand.$rich-blue-darker;
+
+@import "assets/css/primeng-lara-light/blue/theme.scss";
+
+/*
+export brand colors as css variables that angular component styles can use
+*/
+html {
+  @each $name, $value in meta.module-variables("brand") {
+    --#{$name}: #{$value};
+  }
+}
+
+/*
+other styles
+*/
+.primary {
+  background-color: brand.$midnight-blue !important;
+}
+
+.page-color {
+  background-color: brand.$alice-blue !important;
+}
+
+.panel-content {
+  background-color: #ffffff;
+  border-radius: 6px;
+}
+
+.feature-subheading {
+  font-size: 17.5px;
+  color: $primary;
+}
+
+#recruiter-landing p {
+  font-size: 17.5px;
+  color: $textSecondaryColor;
+}
+
+p {
+  font-size: 14px;
+  color: $textSecondaryColor;
+}
+
+#recruiter-hero h1 span {
+  color: brand.$midnight-blue-400;
+}
+
+#character-recruiter {
+  position: absolute;
+  top: 46%;
+}
+
+#demo-hero-recruiter {
+  position: relative;
+}
+
+.testimonial-card {
+  background-color: brand.$surface-50;
+  width: 395px;
+}
+
+.testimonial-image {
+  width: 72px;
+  height: 72px;
+  border-radius: 100%;
+  -webkit-border-radius: 100%;
+}
+
+.cta-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 67px 46px;
+  gap: 48px;
+  height: 308px;
+  background: brand.$midnight-blue;
+  border-radius: 0px 10px 10px 0px;
+}
+
+.cta-text {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 50px;
+  color: #ffffff;
+  letter-spacing: -1px;
+}
+
+.cta-text-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px 0px;
+  width: 441px;
+  height: 256.8px;
+}
+
+.cta-text-button span {
+  color: white;
+}
+
+.select2-selection {
+  padding: 0px !important;
+}
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #727cf5;
+  border-color: #727cf5;
+}
+.page-link:hover {
+  z-index: 2;
+  color: #727cf5;
+  text-decoration: none;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+.page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #727cf5;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+select.form-control,
+select,
+.email-compose-fields .select2-container--default select.select2-selection--multiple,
+.select2-container--default select.select2-selection--single,
+.select2-container--default .select2-selection--single select.select2-search__field,
+select.typeahead,
+select.tt-query,
+select.tt-hint {
+  color: #495057;
+}
+
+/*Created a mark to distinguish the mandatory fields in pages */
+.mandatory {
+  border-left: 4px solid #727cf5;
+}
+
+/*Msde lla buttons the same size for the shorcut (dashboard) */
+.shortcut-btn {
+  width: 127px;
+}
+
+/* This show the full details of the image in Create/Edit pages */
+.img-lg {
+  object-fit: contain;
+}
+
+/* Crop the profile images in the Details pages */
+.profile-crop {
+  object-fit: cover;
+}
+
+/* Style for tables PrimeNG. Pagination uses the same font and color as noble ui */
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  font-size: 0.75rem !important;
+  background: #727cf5 !important;
+  border-color: #727cf5 !important;
+  color: #f9fafb !important;
+}
+
+/* Style for tables PrimeNG - make the content of the table to use the same font family that we use in all pages. */
+.p-component {
+  margin: 0;
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+/* Style for tables PrimeNG - make the header of the table to use the same font family we use in all pages. */
+.p-datatable-thead {
+  border-top: 0 !important;
+  border-bottom-width: 1px !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  color: #686868 !important;
+}
+
+.p-datatable .p-sortable-column:focus {
+  box-shadow: inset 0 0 0 1px #ececec !important;
+}
+
+/* Style for noble ui - highlight the current tab. */
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: #727cf5;
+  font-size: 0.9rem !important;
+}
+
+/* Style for noble ui - make the card same as the ones from primeng. */
+.card-header-product {
+  background-color: #faf9f8;
+  border-bottom: 1px solid #7987a1;
+  padding: 0.875rem 1.5rem;
+  margin-bottom: 0;
+}
+
+//* Style for noble ui - make the description box same as the rest in details sections. */
+.description-product {
+  background-color: #e9ecef;
+  opacity: 1;
+  padding: 0.875rem 0.875rem;
+  margin-bottom: 0;
+}
+
+/* Styles to make the cards look like cascade in wiicommerce. */
+.mlw {
+  margin-left: 85px;
+}
+.mlx {
+  margin-left: 170px;
+}
+.mlxx {
+  margin-left: 255px;
+}
+.mly {
+  margin-left: 340px;
+}
+.mlz {
+  margin-left: 425px;
+}
+
+/* Styles to make the panel look alike nobleui */
+.list-group-item.active {
+  background-color: #727cf5;
+  border-color: #727cf5;
+}
+
+/* Style to make the category lisk have same format */
+.list-wiigo {
+  background-color: #e9ecef;
+  border: 1px solid #e8ebf1;
+  position: relative;
+  display: block;
+  padding: 0.75rem 1.25rem;
+}
+
+/* Styles for materials component to look as noble ui */
+
+.mat-vertical-stepper-header {
+  color: #727cf5 !important;
+}
+
+.mat-step-header.cdk-program-focused {
+  background-color: #edebe9 !important;
+}
+
+.mat-step-header .mat-step-icon {
+  background-color: #edebe9 !important;
+  color: rgb(19, 18, 18) !important;
+}
+
+.mat-step-header .mat-step-icon-selected,
+.mat-step-header .mat-step-icon-state-done,
+.mat-step-header .mat-step-icon-state-edit {
+  background-color: #727cf5 !important;
+  color: #fff !important;
+}
+
+/* styles for datepicker */
+.btn-link {
+  color: #727cf5 !important;
+}
+
+.ngb-dp-weekday {
+  color: #727cf5 !important;
+}
+
+.bg-primary {
+  background-color: #727cf5 !important;
+  border-color: #727cf5 !important;
+}
+
+/* styles for content container - commerce */
+.p-divider.p-divider-vertical {
+  margin: 0 !important;
+  border: 1px #edebe9 !important;
+}
+.p-chips .p-chips-multiple-container .p-chips-input-token input {
+  font-size: 0.75rem !important;
+}
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  border-color: #727cf5 !important;
+  color: #727cf5 !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* The reason the markdown content (problem statement) css is here,
+   is because the contents are dynamically loaded to the innerHTML,
+   and the styles defined in the angular component don't apply, maybe
+   they get compiled away as soon as angular realizes that they are not
+   immediately used? */
+.markdown-content {
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  word-wrap: break-word;
+  font-size: 0.9375rem;
+  font-family: -apple-system, "system-ui", "Segoe UI Adjusted", "Segoe UI", "Liberation Sans", sans-serif;
+  font-feature-settings: normal;
+  font-kerning: auto;
+  font-optical-sizing: auto;
+  font-stretch: 100%;
+  font-style: normal;
+  font-variant-alternates: normal;
+  font-variant-caps: normal;
+  font-variant-east-asian: normal;
+  font-variant-ligatures: normal;
+  font-variant-numeric: normal;
+  font-variation-settings: normal;
+  font-weight: 400;
+  height: auto;
+}
+
+.markdown-content > *:first-child:not(.bolt-table) {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child:not(.bolt-table) {
+  margin-bottom: 0;
+}
+
+.markdown-content a {
+  color: rgba(0, 90, 158, 1);
+  color: var(--communication-foreground, rgba(0, 90, 158, 1));
+  outline: transparent;
+}
+
+.markdown-content a:hover {
+  color: rgba(0, 69, 120, 1);
+  color: rgba(var(--palette-primary-shade-30, 0, 69, 120), 1);
+}
+
+.markdown-content > p {
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  word-wrap: break-word;
+  font-size: 0.9375rem;
+}
+
+.markdown-content p,
+.markdown-content blockquote,
+.markdown-content ul,
+.markdown-content ol,
+.markdown-content table,
+.markdown-content pre {
+  margin: 0 0 16px 0;
+}
+
+.markdown-content table:not(.bolt-table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  cursor: default;
+  display: block;
+  overflow-x: auto;
+}
+
+.markdown-content table:not(.bolt-table) table {
+  margin-bottom: 0;
+}
+
+.markdown-content table:not(.bolt-table) th {
+  color: rgba(0, 0, 0, 0.55);
+  color: var(--text-secondary-color, rgba(0, 0, 0, 0.55));
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: left;
+  border: 1px solid rgba(234, 234, 234, 1);
+  border: 1px solid var(--component-grid-cell-bottom-border-color, rgba(234, 234, 234, 1));
+  padding: 13px 11px;
+}
+
+.markdown-content table:not(.bolt-table) td {
+  border: 1px solid rgba(234, 234, 234, 1);
+  border: 1px solid var(--component-grid-cell-bottom-border-color, rgba(234, 234, 234, 1));
+  text-align: left;
+  padding: 10px 13px;
+  min-width: 50px;
+  max-width: 1000px;
+}
+
+.markdown-content code {
+  font-family: Menlo, Consolas, Courier New, monospace;
+  font-size: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--palette-black-alpha-6, rgba(0, 0, 0, 0.06));
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  padding: 4px 6px;
+  border-radius: 2px;
+}
+
+.markdown-content hr {
+  border: 1px solid rgba(234, 234, 234, 1);
+  border: 1px solid var(--component-grid-cell-bottom-border-color, rgba(234, 234, 234, 1));
+}
+
+.markdown-content pre {
+  font-size: 0.75rem;
+  white-space: pre;
+  word-wrap: normal;
+  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--palette-black-alpha-6, rgba(0, 0, 0, 0.06));
+  border-radius: 2px;
+  padding: 15px;
+  overflow-x: auto;
+}
+
+.markdown-content pre code {
+  font-size: inherit;
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-content blockquote {
+  color: rgba(0, 0, 0, 0.7);
+  color: var(--palette-black-alpha-70, rgba(0, 0, 0, 0.7));
+  border-left: 2px solid rgba(234, 234, 234, 1);
+  border-left: 2px solid var(--component-grid-cell-bottom-border-color, rgba(234, 234, 234, 1));
+  padding-left: 16px;
+}
+
+.markdown-content blockquote > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content blockquote > p,
+.markdown-content blockquote ol,
+.markdown-content blockquote ul {
+  margin: 16px 0;
+}
+
+.markdown-content img {
+  max-width: 100%;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 32px;
+}
+
+.markdown-content ul ul,
+.markdown-content ul ol,
+.markdown-content ol ul,
+.markdown-content ol ol {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-content li {
+  list-style: inherit;
+}
+
+.markdown-content li + li {
+  margin-top: 4px;
+}
+
+.markdown-content h1 {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  margin: 24px 0 8px 0;
+  letter-spacing: -0.04em;
+}
+
+.markdown-content h1 .bowtie-icon {
+  font-size: unset;
+}
+
+.markdown-content h1:first-child {
+  margin-top: 0;
+}
+
+.markdown-content h2 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  margin: 24px 0 8px 0;
+}
+
+.markdown-content h2 .bowtie-icon {
+  font-size: unset;
+}
+
+.markdown-content h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  margin: 24px 0 8px 0;
+}
+
+.markdown-content h3 .bowtie-icon {
+  font-size: unset;
+}
+
+.markdown-content h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  margin: 24px 0 8px 0;
+}
+
+.markdown-content h4 .bowtie-icon {
+  font-size: unset;
+}
+
+.markdown-content h5 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  margin: 24px 0 8px 0;
+}
+
+.markdown-content h5 .bowtie-icon {
+  font-size: unset;
+}
+
+.markdown-content h6 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.55);
+  color: var(--text-secondary-color, rgba(0, 0, 0, 0.55));
+  margin: 24px 0 8px 0;
+}
+
+.markdown-content h6 .bowtie-icon {
+  font-size: unset;
+}
+
+.bolt-focus-visible .markdown-content a:focus {
+  outline: rgba(0, 0, 0, 0.6) solid 1px;
+  outline: var(--palette-black-alpha-60, rgba(0, 0, 0, 0.6)) solid 1px;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: rgba(0, 0, 0, 0.9);
+  color: var(--text-primary-color, rgba(0, 0, 0, 0.9));
+  -webkit-text-size-adjust: none;
+}
+
+.markdown-preview-container.markdown-content {
+  margin: 20px;
+}
+
+.p-card {
+  box-shadow: none;
+  background-color: #fff;
+  border: 1.25px solid #dee2e6;
+  border-radius: 6px;
+  background-repeat: repeat;
+  background-size: cover;
+}
+
+.p-sortable-column-icon {
+  font-size: 10px;
+  color: gray;
+}

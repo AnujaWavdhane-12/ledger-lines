@@ -1,0 +1,24 @@
+<header class="header-light scroll-light clone">
+  <div class="container">
+    <div class="logo">
+      <a href="/home">
+        <h3 class="p-0 m-1">LedgerLines</h3>
+      </a>
+    </div>
+
+    <ul id="mainmenu" class="main-menu" [ngClass]="{ show: showMainMenu }">
+      <ng-container *ngIf="isAuthenticated">
+        <li>
+          <a [routerLink]="['/clients']">Clients</a>
+        </li>
+        <li>
+          <a [routerLink]="['/transactions']">Transactions</a>
+        </li>
+      </ng-container>
+    </ul>
+
+
+    <div id="menu-btn" class="menu-button" role="button" tabindex="0" (click)="toggleMainMenu()"></div>
+  </div>
+</header>
+<!-- header close -->

@@ -1,0 +1,5 @@
+output.xml
+note_modules
+.serverless
+.webpackCache
+dist
