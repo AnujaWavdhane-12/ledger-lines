@@ -112,12 +112,22 @@ import { Client } from 'src/service-sdk';
         <ng-template pTemplate="caption">
           <div class="flex">
             <div class="p-inputgroup">
-              <input pInputText type="text" (input)="dataTable.filterGlobal($event.target.value, 'contains')" placeholder="Search clients" />
-              <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" (click)="clear(dataTable)"></button>
+              <input
+                pInputText
+                type="text"
+                (input)="dataTable.filterGlobal($event.target.value, 'contains')"
+                placeholder="Search clients" />
+              <button
+                pButton
+                label="Clear"
+                class="p-button-outlined"
+                icon="pi pi-filter-slash"
+                (click)="clear(dataTable)"></button>
             </div>
           </div>
         </ng-template>
-        <ng-template pTemplate="header" let-columns>
+
+        <ng-template pTemplate="header">
           <tr>
             <th *ngIf="showCheckbox">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
@@ -147,7 +157,7 @@ import { Client } from 'src/service-sdk';
             </td>
 
             <td>
-              <ng-container *ngIf="rowData.organization.is_quickbooks_connected; else showSplitButton">
+              <ng-container *ngIf="rowData.organization?.is_quickbooks_connected; else showSplitButton">
                 <div style="display: flex; justify-content: center; color: green;">
                   <i class="pi pi-check"></i>
                 </div>
@@ -155,18 +165,19 @@ import { Client } from 'src/service-sdk';
 
               <ng-template #showSplitButton>
                 <span class="p-buttonset">
-                  <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 1 })" pButton pRipple label="QB"></button>
-                  <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 2 })" pButton pRipple label="Xero"></button>
+                  <button (click)="ledgerAction.emit({ rowData, ledgerId: 1 })" pButton pRipple label="QB"></button>
+                  <button (click)="ledgerAction.emit({ rowData, ledgerId: 2 })" pButton pRipple label="Xero"></button>
                 </span>
               </ng-template>
             </td>
 
             <td>
-              <ng-container *ngIf="rowData.organization.is_bank_connected; else bankNotConnected">
+              <ng-container *ngIf="rowData.organization?.is_bank_connected; else bankNotConnected">
                 <div style="display: flex; justify-content: center; color: green;">
                   <i class="pi pi-check"></i>
                 </div>
               </ng-container>
+
               <ng-template #bankNotConnected>
                 <p-button
                   icon="pi pi-external-link"
@@ -179,8 +190,8 @@ import { Client } from 'src/service-sdk';
 
             <td>
               <p-button
-                [icon]="'pi pi-cog'"
-                [label]="'Edit'"
+                icon="pi pi-cog"
+                label="Edit"
                 styleClass="p-button-outlined"
                 (click)="editClient(rowData)">
               </p-button>
@@ -193,24 +204,24 @@ import { Client } from 'src/service-sdk';
 })
 export class ClientsTableComponent {
   @Output() showBankConnectionRequestModal = new EventEmitter<Client>();
-  @Output() ledgerAction = new EventEmitter<{ rowData: any; ledgerId: number }>();
+  @Output() ledgerAction = new EventEmitter<{ rowData: Client; ledgerId: number }>();
   @Output() selectedClientEvent = new EventEmitter<Client>();
 
-  @Input() loading?: boolean;
-  @Input() value: any[];
-  @Input() defaultSortField?: string;
-  @Input() defaultSortOrder?: number = 1;
-  @Input() showCheckbox?: boolean = false;
+  @Input() loading = false;
+  @Input() value: Client[] = [];
+  @Input() defaultSortField = 'first_name';
+  @Input() defaultSortOrder = 1;
+  @Input() showCheckbox = false;
 
-  protected showBankConnectionForm(rowData: Client) {
+  showBankConnectionForm(rowData: Client): void {
     this.showBankConnectionRequestModal.emit(rowData);
   }
 
-  protected clear(table: Table) {
+  clear(table: Table): void {
     table.clear();
   }
 
-  editClient(client: Client) {
+  editClient(client: Client): void {
     this.selectedClientEvent.emit(client);
   }
 }
