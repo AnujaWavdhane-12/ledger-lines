@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import moment from 'moment';
 import { Table } from 'primeng/table';
 import { Client } from 'src/service-sdk';
 
@@ -123,12 +122,6 @@ import { Client } from 'src/service-sdk';
             <th *ngIf="showCheckbox">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <!--
-            <th pReorderableColumn pResizableColumn [pSortableColumn]="'organization.name'">
-              Organization
-              <p-sortIcon [field]="'organization.name'"></p-sortIcon>
-            </th>
-              -->
             <th pReorderableColumn pResizableColumn [pSortableColumn]="'first_name'">
               Client
               <p-sortIcon [field]="'first_name'"></p-sortIcon>
@@ -139,7 +132,7 @@ import { Client } from 'src/service-sdk';
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-editing="editing" let-rowData let-columns="columns" let-i="rowIndex" let-ri="rowIndex">
+        <ng-template pTemplate="body" let-rowData>
           <tr>
             <td *ngIf="showCheckbox">
               <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
@@ -147,51 +140,50 @@ import { Client } from 'src/service-sdk';
 
             <td>
               <a [routerLink]="['/clients', rowData.client_id, 'transactions']" class="text-decoration-underline">
-                <span [title]="'The main point of contact at the organization.'">
-                  <span>{{ rowData.first_name + ' ' + rowData.last_name || '-' }}</span>
-                  <br />
-                  <small>{{ rowData.email }}</small>
-                </span>
+                <span>{{ rowData.first_name + ' ' + rowData.last_name || '-' }}</span>
+                <br />
+                <small>{{ rowData.email }}</small>
               </a>
             </td>
 
             <td>
-              <span [title]="'Ledger connection'" class="centered-cell">
-                <ng-container *ngIf="rowData.organization.is_quickbooks_connected; else showSplitButton">
-                  <div style="display: flex; justify-content: center; color: green;">
-                    <i class="pi pi-check"></i>
-                  </div>
-                </ng-container>
+              <ng-container *ngIf="rowData.organization.is_quickbooks_connected; else showSplitButton">
+                <div style="display: flex; justify-content: center; color: green;">
+                  <i class="pi pi-check"></i>
+                </div>
+              </ng-container>
 
-                <ng-template #showSplitButton>
-                  <span class="p-buttonset">
-                    <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 1 })" pButton pRipple label="QB"></button>
-                    <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 2 })" pButton pRipple label="Xero"></button>
-                  </span>
-                </ng-template>
-              </span>
+              <ng-template #showSplitButton>
+                <span class="p-buttonset">
+                  <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 1 })" pButton pRipple label="QB"></button>
+                  <button (click)="ledgerAction.emit({ rowData: rowData, ledgerId: 2 })" pButton pRipple label="Xero"></button>
+                </span>
+              </ng-template>
             </td>
 
             <td>
-              <span [title]="'Bank connection'" class="centered-cell">
-                <ng-container *ngIf="rowData.organization.is_bank_connected; else bankNotConnected">
-                  <div style="display: flex; justify-content: center; color: green;">
-                    <i class="pi pi-check"></i>
-                  </div>
-                </ng-container>
-                <ng-template #bankNotConnected>
-                  <p-button
-                    icon="pi pi-external-link"
-                    label=""
-                    [loading]="false"
-                    styleClass="p-button-outlined"
-                    (click)="showBankConnectionForm(rowData)"></p-button>
-                </ng-template>
-              </span>
+              <ng-container *ngIf="rowData.organization.is_bank_connected; else bankNotConnected">
+                <div style="display: flex; justify-content: center; color: green;">
+                  <i class="pi pi-check"></i>
+                </div>
+              </ng-container>
+              <ng-template #bankNotConnected>
+                <p-button
+                  icon="pi pi-external-link"
+                  label=""
+                  [loading]="false"
+                  styleClass="p-button-outlined"
+                  (click)="showBankConnectionForm(rowData)"></p-button>
+              </ng-template>
             </td>
 
             <td>
-              <p-button [icon]="'pi pi-cog'" [label]="'Edit'" styleClass="p-button-outlined" ></p-button>
+              <p-button
+                [icon]="'pi pi-cog'"
+                [label]="'Edit'"
+                styleClass="p-button-outlined"
+                (click)="editClient(rowData)">
+              </p-button>
             </td>
           </tr>
         </ng-template>
@@ -200,22 +192,25 @@ import { Client } from 'src/service-sdk';
   `,
 })
 export class ClientsTableComponent {
-
   @Output() showBankConnectionRequestModal = new EventEmitter<Client>();
+  @Output() ledgerAction = new EventEmitter<{ rowData: any; ledgerId: number }>();
+  @Output() selectedClientEvent = new EventEmitter<Client>();
 
   @Input() loading?: boolean;
   @Input() value: any[];
   @Input() defaultSortField?: string;
   @Input() defaultSortOrder?: number = 1;
   @Input() showCheckbox?: boolean = false;
-  @Output() ledgerAction = new EventEmitter<{ rowData: any; ledgerId: number }>();
-  @Output() selectedClientEvent = new EventEmitter<Client>();
 
-  protected showBankConnectionForm(rowData) {
-    this.showBankConnectionRequestModal.emit(rowData as Client);
+  protected showBankConnectionForm(rowData: Client) {
+    this.showBankConnectionRequestModal.emit(rowData);
   }
 
   protected clear(table: Table) {
     table.clear();
+  }
+
+  editClient(client: Client) {
+    this.selectedClientEvent.emit(client);
   }
 }
